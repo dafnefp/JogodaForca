@@ -1,0 +1,138 @@
+import random
+
+class Forca():
+    
+    def __init__(self, palavra):
+        self.palavra = palavra
+        #cria listas para guardar as letras certas e erradas
+        self.acertos = []
+        self.erros = []
+        #cria um objeto para armazenar a qtde de erros
+        self.erro = 0
+        
+    def tentativa(self, letra):
+        #verifica se contem a letra na palavra e se ela já não foi 
+        if letra in self.palavra and letra not in self.acertos:
+            self.acertos.append(letra)
+        #verifica se não contem a letra na palavra e se ela já não foi
+        elif letra not in self.palavra and letra not in self.erros:
+            self.erros.append(letra)
+            self.erro += 1
+        else:
+            return False
+        return True
+        
+    def fim(self):
+        return self.venceu() or (len(self.erros)==6)
+        
+    def venceu(self):
+        if '_ ' not in self.esconder_letra():
+            return True
+        return False
+        
+    def esconder_letra(self):
+        cod = ""
+        for letra in self.palavra:
+            if letra not in self.acertos:
+                cod += '_ '
+            else:
+                cod += letra
+        return cod
+        
+    def status(self):
+        self.desenho(self.erro)
+        print('\nPalavra: ' + self.esconder_letra())
+        print('\nLetras erradas: ')
+        for letra in self.erros:
+            print(letra)
+        print()
+        print('\nLetras certas: ')
+        for letra in self.acertos:
+            print(letra)
+        print()
+        
+    def desenho(self, erro):
+        print("  _______     ")
+        print(" |/      |    ")
+
+        if erro == 0:
+            print(" |            ")
+            print(" |            ")
+            print(" |            ")
+            print(" |            ")
+
+        if erro == 1:
+            print(" |      (_)   ")
+            print(" |            ")
+            print(" |            ")
+            print(" |            ")
+
+        if erro == 2:
+            print(" |      (_)   ")
+            print(" |       |    ")
+            print(" |       |    ")
+            print(" |            ")
+
+        if erro == 3:
+            print(" |      (_)   ")
+            print(" |       |/   ")
+            print(" |       |    ")
+            print(" |            ")
+
+        if erro == 4:
+            print(" |      (_)   ")
+            print(" |      \|/   ")
+            print(" |       |    ")
+            print(" |            ")
+
+        if erro == 5:
+            print(" |      (_)   ")
+            print(" |      \|/   ")
+            print(" |       |    ")
+            print(" |        \   ")
+
+        if erro == 6:
+            print(" |      (_)   ")
+            print(" |      \|/   ")
+            print(" |       |    ")
+            print(" |      / \   ")
+
+        print(" |            ")
+        print("_|___         ")
+        
+def palavra_aleatoria():
+    with open('Palavras.txt', "rt") as p:
+        bank = p.readlines()
+    #strip remove os espaços em branco no inicio e no fim
+        
+    return bank[random.randint(0, len(bank))].strip().upper()
+    
+#função de inicio do jogo
+def inicio():
+    #pega uma palavra aleatoria e chama a classe jogo
+    jogo = Forca(palavra_aleatoria())
+    
+    #enquanto não obedecer o método fim
+    while not jogo.fim():
+        #chama o status, que é onde informa ao o usuário a palavra, erros e acertos
+        jogo.status()
+        #pede pro usuario inserir uma letra
+        user_input = input('\nDigite uma letra: ')
+        user_input = user_input.strip().upper()
+        #chama o método tentativa, para verificar se acertou ou errou
+        jogo.tentativa(user_input)
+    
+    jogo.status()
+    
+    if jogo.venceu():
+        print('\nParabéns! Você venceu!')
+    else:
+        print('\nGame over! Você perdeu!')
+        print('A palavra era ' + jogo.palavra)
+
+#chamando a função para iniciar
+#o if __name__ a gente coloca para se certificar de que o modulo está sendo executado diretamente
+#ou seja, se existisse outro módulo chamado inicio, que eu importasse o __name__ dele seria o proprio nome do modulo
+#mas quando o modulo está no proprio código o nome dele é __main__
+if __name__ == "__main__":
+    inicio()
